@@ -14,9 +14,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
+            justify-content: flex-start;
+            min-height: 100vh;
         }
         header {
             text-align: center;
@@ -24,6 +23,8 @@
         }
         header img {
             max-width: 300px;
+            width: 80%;
+            height: auto;
             border-radius: 100%;
             margin-bottom: 50px;
             border: 2px solid #9e4141;
@@ -121,12 +122,8 @@
             color: white;
         }
         @keyframes blink {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         .records {
             margin-top: 20px;
@@ -147,6 +144,16 @@
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        /* Responsividade */
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+            button {
+                grid-column: span 1;
+            }
         }
     </style>
 </head>
@@ -160,7 +167,6 @@
             <h2>Informações do Veículo</h2>
             <label for="motorista">Nome do Motorista:</label>
             <input type="text" id="motorista" placeholder="Nome do Motorista" required>
-
             <label for="placa">Placa do Veículo:</label>
             <input type="text" id="placa" placeholder="Placa do Veículo" required>
         </div>
@@ -168,106 +174,83 @@
             <h2>Pesos por Eixo</h2>
             <label for="tara">Tara (kg):</label>
             <input type="number" id="tara" placeholder="Tara (kg)" required>
-
             <label for="eixo1">1° Eixo (kg):</label>
             <input type="number" id="eixo1" placeholder="1° Eixo (kg)" required>
-
             <label for="eixo2">2° Eixo (kg):</label>
             <input type="number" id="eixo2" placeholder="2° Eixo (kg)" required>
         </div>
         <div class="section">
             <label for="eixo3">3° Eixo (kg):</label>
             <input type="number" id="eixo3" placeholder="3° Eixo (kg)" required>
-
             <label for="eixo4">4° Eixo (kg):</label>
             <input type="number" id="eixo4" placeholder="4° Eixo (kg)" required>
-
             <label for="eixo5">5° Eixo (kg):</label>
             <input type="number" id="eixo5" placeholder="5° Eixo (kg)" required>
         </div>
         <button type="button" onclick="calculateWeight()">Calcular</button>
         <button type="button" onclick="window.location.href = 'indexregistro.html'">Ver Registros</button>
-
     </main>
+
     <div id="notification" class="notification"></div>
     <div id="records" class="records">
         <h2>Registros Salvos</h2>
         <div id="recordList"></div>
     </div>
     <audio id="alertSound" src="alert.mp3"></audio>
+
     <script>
-        let records = [];
-
-        // Função para calcular e salvar registros
         function calculateWeight() {
-    const motorista = document.getElementById("motorista").value.trim();
-    const placa = document.getElementById("placa").value.trim();
-    const tara = parseFloat(document.getElementById("tara").value) || 0;
-    const eixo1 = parseFloat(document.getElementById("eixo1").value) || 0;
-    const eixo2 = parseFloat(document.getElementById("eixo2").value) || 0;
-    const eixo3 = parseFloat(document.getElementById("eixo3").value) || 0;
-    const eixo4 = parseFloat(document.getElementById("eixo4").value) || 0;
-    const eixo5 = parseFloat(document.getElementById("eixo5").value) || 0;
+            const motorista = document.getElementById("motorista").value.trim();
+            const placa = document.getElementById("placa").value.trim();
+            const tara = parseFloat(document.getElementById("tara").value) || 0;
+            const eixo1 = parseFloat(document.getElementById("eixo1").value) || 0;
+            const eixo2 = parseFloat(document.getElementById("eixo2").value) || 0;
+            const eixo3 = parseFloat(document.getElementById("eixo3").value) || 0;
+            const eixo4 = parseFloat(document.getElementById("eixo4").value) || 0;
+            const eixo5 = parseFloat(document.getElementById("eixo5").value) || 0;
 
-    const totalWeight = eixo1 + eixo2 + eixo3 + eixo4 + eixo5 - tara;
-    const notificationDiv = document.getElementById("notification");
-    const alertSound = document.getElementById("alertSound");
+            const totalWeight = eixo1 + eixo2 + eixo3 + eixo4 + eixo5 - tara;
+            const notificationDiv = document.getElementById("notification");
+            const alertSound = document.getElementById("alertSound");
 
-    // Get the current date and time
-    const date = new Date();
-    const timestamp = date.toLocaleString(); // Date in locale format
+            const date = new Date();
+            const timestamp = date.toLocaleString();
 
-    // Save record
-    const record = {
-        motorista, placa, totalWeight, tara, eixo1, eixo2, eixo3, eixo4, eixo5, timestamp
-    };
+            let records = JSON.parse(localStorage.getItem('records')) || [];
+            const record = { motorista, placa, totalWeight, tara, eixo1, eixo2, eixo3, eixo4, eixo5, timestamp };
+            records.push(record);
+            if (records.length > 300) {
+                records = records.slice(-300);
+            }
+            localStorage.setItem('records', JSON.stringify(records));
 
-    // Load existing records
-    let records = JSON.parse(localStorage.getItem('records')) || [];
+            if (totalWeight > 10000) {
+                notificationDiv.className = "notification denied";
+                notificationDiv.innerText = `ACESSO NEGADO\nMotorista: ${motorista}\nPlaca: ${placa}\nData: ${timestamp}`;
+                alertSound.play();
+            } else {
+                notificationDiv.className = "notification allowed";
+                notificationDiv.innerText = `ACESSO PERMITIDO\nMotorista: ${motorista}\nPlaca: ${placa}\nData: ${timestamp}`;
+            }
+            notificationDiv.style.display = "block";
+        }
 
-    // Add the new record to the array
-    records.push(record);
-
-    // Limit the records to the last 300
-    if (records.length > 300) {
-        records = records.slice(-300);
-    }
-
-    // Save the updated records to localStorage
-    localStorage.setItem('records', JSON.stringify(records));
-
-    if (totalWeight > 10000) {
-        notificationDiv.className = "notification denied";
-        notificationDiv.innerText = `ACESSO NEGADO\nMotorista: ${motorista}\nPlaca: ${placa}\nData: ${timestamp}`;
-        alertSound.play();
-    } else {
-        notificationDiv.className = "notification allowed";
-        notificationDiv.innerText = `ACESSO PERMITIDO\nMotorista: ${motorista}\nPlaca: ${placa}\nData: ${timestamp}`;
-    }
-    notificationDiv.style.display = "block";
-}
-
-
-        // Função para exibir os registros salvos
         function showRecords() {
             const recordsDiv = document.getElementById("records");
             const recordList = document.getElementById("recordList");
             recordsDiv.style.display = "block";
-
-            // Carregar registros salvos do localStorage
             const savedRecords = JSON.parse(localStorage.getItem('records')) || [];
             recordList.innerHTML = "";
             savedRecords.forEach((record) => {
                 const recordItem = document.createElement("div");
                 recordItem.classList.add("record-item");
-                recordItem.innerHTML = `
-                    <span>${record.motorista} - ${record.placa}</span>
-                    <span>Peso Total: ${record.totalWeight} kg</span>
-                    <span>Data: ${record.timestamp}</span>
-                `;
+                recordItem.innerHTML = `<span>${record.motorista} - ${record.placa}</span>
+                                        <span>Peso Total: ${record.totalWeight} kg</span>
+                                        <span>Data: ${record.timestamp}</span>`;
                 recordList.appendChild(recordItem);
             });
         }
     </script>
 </body>
 </html>
+
