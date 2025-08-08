@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesagem de veiculos pesados</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ffffff, #fffdfd);
+            color: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        header img {
+            max-width: 300px;
+            border-radius: 100%;
+            margin-bottom: 50px;
+            border: 2px solid #9e4141;
+        }
+        header h1 {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #000000;
+            text-shadow: 5px 5px 5px rgba(189, 42, 42, 0.5);
+            margin: 0;
+        }
+        main {
+            width: 90%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+            box-shadow: 0 10px 20px rgba(75, 78, 70, 0.5);
+        }
+        .section {
+            background: rgba(96, 102, 96, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .section h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #ffcc00;
+        }
+        label {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+            display: block;
+            color: #000000;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 5px rgba(179, 41, 41, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        input::placeholder {
+            color: #ddd;
+        }
+        button {
+            grid-column: span 2;
+            padding: 15px;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #0072ff, #00c6ff);
+            transform: translateY(-2px);
+        }
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            display: none;
+            z-index: 9999;
+            animation: blink 1.5s infinite;
+        }
+        .denied {
+            background: linear-gradient(135deg, #ff4e50, #ad231e);
+            color: white;
+        }
+        .allowed {
+            background: linear-gradient(135deg, #46d84e, #38a734);
+            color: white;
+        }
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        .records {
+            margin-top: 20px;
+            color: #fff;
+            font-size: 1.2em;
+            width: 90%;
+            max-width: 1000px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+        .record-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logonascentes.png" alt="Logo">
+        <h1>CÁLCULO</h1>
+    </header>
+    <main>
+        <div class="section">
+            <h2>Informações do Veículo</h2>
+            <label for="motorista">Nome do Motorista:</label>
+            <input type="text" id="motorista" placeholder="Nome do Motorista" required>
+
+            <label for="placa">Placa do Veículo:</label>
+            <input type="text" id="placa" placeholder="Placa do Veículo" required>
+        </div>
+        <div class="section">
+            <h2>Pesos por Eixo</h2>
+            <label for="tara">Tara (kg):</label>
+            <input type="number" id="tara" placeholder="Tara (kg)" required>
+
+            <label for="eixo1">1° Eixo (kg):</label>
+            <input type="number" id="eixo1" placeholder="1° Eixo (kg)" required>
+
+            <label for="eixo2">2° Eixo (kg):</label>
+            <input type="number" id="eixo2" placeholder="2° Eixo (kg)" required>
+        </div>
+        <div class="section">
+            <label for="eixo3">3° Eixo (kg):</label>
+            <input type="number" id="eixo3" placeholder="3° Eixo (kg)" required>
+
+            <label for="eixo4">4° Eixo (kg):</label>
+            <input type="number" id="eixo4" placeholder="4° Eixo (kg)" required>
+
+            <label for="eixo5">5° Eixo (kg):</label>
+            <input type="number" id="eixo5" placeholder="5° Eixo (kg)" required>
+        </div>
+        <button type="button" onclick="calculateWeight()">Calcular</button>
+        <button type="button" onclick="window.location.href = 'indexregistro.html'">Ver Registros</button>
+
+    </main>
+    <div id="notification" class="notification"></div>
+    <div id="records" class="records">
+        <h2>Registros Salvos</h2>
+        <div id="recordList"></div>
+    </div>
+    <audio id="alertSound" src="alert.mp3"></audio>
+    <script>
+        let records = [];
+
+        // Função para calcular e salvar registros
+        function calculateWeight() {
+    const motorista = document.getElementById("motorista").value.trim();
+    const placa = document.getElementById("placa").value.trim();
+    const tara = parseFloat(document.getElementById("tara").value) || 0;
+    const eixo1 = parseFloat(document.getElementById("eixo1").value) || 0;
+    const eixo2 = parseFloat(document.getElementById("eixo2").value) || 0;
+    const eixo3 = parseFloat(document.getElementById("eixo3").value) || 0;
+    const eixo4 = parseFloat(document.getElementById("eixo4").value) || 0;
+    const eixo5 = parseFloat(document.getElementById("eixo5").value) || 0;
+
+    const totalWeight = eixo1 + eixo2 + eixo3 + eixo4 + eixo5 - tara;
+    const notificationDiv = document.getElementById("notification");
+    const alertSound = document.getElementById("alertSound");
+
+    // Get the current date and time
+    const date = new Date();
+    const timestamp = date.toLocaleString(); // Date in locale format
+
+    // Save record
+    const record = {
+        motorista, placa, totalWeight, tara, eixo1, eixo2, eixo3, eixo4, eixo5, timestamp
+    };
+
+    // Load existing records
+    let records = JSON.parse(localStorage.getItem('records')) || [];
+
+    // Add the new record to the array
+    records.push(record);
+
+    // Limit the records to the last 300
+    if (records.length > 300) {
+        records = records.slice(-300);
+    }
+
+    // Save the updated records to localStorage
+    localStorage.setItem('records', JSON.stringify(records));
+
+    if (totalWeight > 10000) {
+        notificationDiv.className = "notification denied";
+        notificationDiv.innerText = `ACESSO NEGADO\nMotorista: ${motorista}\nPlaca: ${placa}\nData: ${timestamp}`;
+        alertSound.play();
+    } else {
+        notificationDiv.className = "notification allowed";
+        notificationDiv.innerText = `ACESSO PERMITIDO\nMotorista: ${motorista}\nPlaca: ${placa}\nData: ${timestamp}`;
+    }
+    notificationDiv.style.display = "block";
+}
+
+
+        // Função para exibir os registros salvos
+        function showRecords() {
+            const recordsDiv = document.getElementById("records");
+            const recordList = document.getElementById("recordList");
+            recordsDiv.style.display = "block";
+
+            // Carregar registros salvos do localStorage
+            const savedRecords = JSON.parse(localStorage.getItem('records')) || [];
+            recordList.innerHTML = "";
+            savedRecords.forEach((record) => {
+                const recordItem = document.createElement("div");
+                recordItem.classList.add("record-item");
+                recordItem.innerHTML = `
+                    <span>${record.motorista} - ${record.placa}</span>
+                    <span>Peso Total: ${record.totalWeight} kg</span>
+                    <span>Data: ${record.timestamp}</span>
+                `;
+                recordList.appendChild(recordItem);
+            });
+        }
+    </script>
+</body>
+</html>

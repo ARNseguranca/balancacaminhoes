@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros de Pesos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e8eaee;
+            color: #fff;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #ffcc00;
+        }
+        .record-item {
+            background: rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .record-item span {
+            font-size: 1.2em;
+        }
+        .back-button {
+            display: block;
+            width: 150px;
+            margin: 20px auto;
+            padding: 10px;
+            text-align: center;
+            background-color: #0072ff;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registros Salvos</h1>
+    <div id="recordList"></div>
+    <a href="index.html" class="back-button">Voltar</a>
+
+    <script>
+        window.onload = function() {
+            const recordList = document.getElementById("recordList");
+            const savedRecords = JSON.parse(localStorage.getItem('records')) || [];
+
+            // Display only the last 300 records
+            const last300Records = savedRecords.slice(-300);
+
+            last300Records.forEach(record => {
+                const recordItem = document.createElement("div");
+                recordItem.classList.add("record-item");
+                recordItem.innerHTML = `
+                    <span>${record.motorista} - ${record.placa}</span>
+                    <span>Peso Total: ${record.totalWeight} kg</span>
+                    <span>Data: ${record.timestamp}</span>
+                `;
+                recordList.appendChild(recordItem);
+            });
+        };
+    </script>
+</body>
+</html>
